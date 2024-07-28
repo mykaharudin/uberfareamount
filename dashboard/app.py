@@ -52,7 +52,7 @@ st.subheader("💰 Distribusi Tarif Perjalanan")
 fig, ax = plt.subplots()
 sns.histplot(data_distance['fare_amount'], bins=50, kde=True, ax=ax)
 ax.set_title('Distribusi Tarif Perjalanan')
-st.pyplot(fig)
+# st.image(data/AktualvsPrediksi.png)
 
 # Model Regresi Linier
 st.header("📉 Model Regresi Linier")
