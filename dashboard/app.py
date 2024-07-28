@@ -42,10 +42,7 @@ Melalui berbagai visualisasi, kami menemukan beberapa pola menarik dalam data:
 
 # Visualisasi Distribusi Jarak Perjalanan
 st.subheader("📏 Distribusi Jarak Perjalanan")
-fig, ax = plt.subplots()
-sns.histplot(uber_data['distance_km'], bins=50, kde=True, ax=ax)
-ax.set_title('Distribusi Jarak Perjalanan')
-st.pyplot(fig)
+
 
 # Visualisasi Distribusi Tarif Perjalanan
 st.subheader("💰 Distribusi Tarif Perjalanan")
