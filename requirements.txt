@@ -2,8 +2,7 @@ numpy
 pandas
 matplotlib
 seaborn
-datetime
 streamlit
 scipy
-sklearn
+scikit-learn
 xgboost
