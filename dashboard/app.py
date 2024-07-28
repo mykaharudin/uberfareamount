@@ -25,7 +25,7 @@ uber_data = pd.read_csv(filepathdata)
 
 # Contoh data
 st.write("Berikut adalah contoh data yang dianalisis:")
-
+st.write(uber_data.head())
 
 # Temuan dari Analisis Data
 st.header("🔍 Temuan dari Analisis Data")
