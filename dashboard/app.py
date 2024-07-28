@@ -52,17 +52,18 @@ st.subheader("💰 Distribusi Tarif Perjalanan")
 fig, ax = plt.subplots()
 sns.histplot(data_distance['fare_amount'], bins=50, kde=True, ax=ax)
 ax.set_title('Distribusi Tarif Perjalanan')
-st.image('https://github.com/mykaharudin/uberfareamount/blob/main/data/AktualvsPrediksi.png?raw=true')
+st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/AktualvsPrediksi.png?raw=true")
 
 # Model Regresi Linier
 st.header("📉 Model Regresi Linier")
 st.markdown("""
 Kami menerapkan model regresi linier untuk memprediksi tarif perjalanan berdasarkan jumlah penumpang, jarak perjalanan, dan jam sibuk. Model ini mencapai skor R² sebesar 0,61, menunjukkan kemampuan model menjelaskan 61% variasi data.
 """)
-st.image('https://github.com/mykaharudin/uberfareamount/blob/main/data/Plotresidualprediksi.png?raw=true')
+st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/Plotresidualprediksi.png?raw=true")
 
 # Hasil Model
 st.subheader("📈 Hasil Model")
+st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/lr.png?raw=true")
 st.markdown("""
 - 📏 Untuk setiap 1,42 km perjalanan, tarif meningkat rata-rata sebesar 2,08 dolar, atau untuk setiap 1 km perjalanan, tarif meningkat rata-rata sebesar 2,08 dolar.
 """)
@@ -72,13 +73,13 @@ st.header("🤖 Model Pelatihan")
 
 # Visualisasi Prediksi vs Nilai Aktual
 st.subheader("🔮 Random Forest Model")
-st.image('https://github.com/mykaharudin/uberfareamount/blob/main/data/Random%20Forest%20Model.PNG?raw=true')
-st.markdown('Random Forest: Findings Nilai R-squared adalah 0,58.')
+st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/Random%20Forest%20Model.PNG?raw=true")
+st.markdown("Random Forest: Findings Nilai R-squared adalah 0,58.")
 
 
 st.subheader("🔮 XGboost")
-st.image('https://github.com/mykaharudin/uberfareamount/blob/main/data/XGboost.PNG?raw=true')
-st.markdown('XGB findings: XGB mencakupi 0.62 varian data atau dengan akurasi 62%, dimana hal ini merupakan hasil tertinggi')
+st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/XGboost.PNG?raw=true")
+st.markdown("XGB findings: XGB mencakupi 0.62 varian data atau dengan akurasi 62%, dimana hal ini merupakan hasil tertinggi")
 
 # Footer
 st.markdown("## 🏁 Kesimpulan")
