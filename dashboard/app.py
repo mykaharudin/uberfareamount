@@ -20,16 +20,12 @@ Dataset ini terdiri dari 200.000 sampel yang mencakup 7 karakteristik utama. Sem
 """)
 
 # Load data (misalnya dari file CSV yang sudah dibersihkan di Google Colab)
-@st.cache
-def load_data():
-    df = pd.read_csv('https://github.com/mykaharudin/uberfareamount/blob/main/uber.csv')
-    return df
-
-data = load_data()
+filepathdata='data/uber.csv'
+uber_data = pd.read_csv(filepathdata)
 
 # Contoh data
 st.write("Berikut adalah contoh data yang dianalisis:")
-st.write(data.head())
+
 
 # Temuan dari Analisis Data
 st.header("🔍 Temuan dari Analisis Data")
