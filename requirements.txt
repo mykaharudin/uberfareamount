@@ -1,9 +1,9 @@
-streamlit
-pandas
 numpy
+pandas
 matplotlib
 seaborn
 datetime
+streamlit
 scipy
 sklearn
 xgboost
