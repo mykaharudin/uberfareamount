@@ -1,4 +1,4 @@
-## Project Data Scienttis
+## Project Data Scientis
 Repositori yang berupa projek analis data ,yang dibuat dengan menggunakan<br>
 **Streamlit** 
 <img src="https://user-images.githubusercontent.com/7164864/217935870-c0bc60a3-6fc0-4047-b011-7b4c59488c91.png" alt="Streamlit logo"></img><br><br>
@@ -38,9 +38,9 @@ Repositori yang berupa projek analis data ,yang dibuat dengan menggunakan<br>
 1. Melakukan Akses dan Kompilasi(Local):
 
     ```shell
-    cd proyek_dataAnalyst
+    cd 
     cd dashboard
-    streamlit run dashboard.py
+    streamlit run app.py
     ```
 2. Melakukan Akses secara Cloud (online):
    silakan klik
