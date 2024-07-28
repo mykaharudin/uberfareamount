@@ -92,6 +92,10 @@ Proyek ini memberikan wawasan penting tentang faktor-faktor yang mempengaruhi ta
 # Muat model
 with open('data/gradient_boost.pickle', 'rb') as to_read:
     model = pickle.load(to_read)
+    
+# Daftar nama fitur yang digunakan saat melatih model
+feature_names = ["pickup_longitude", "pickup_latitude", "dropoff_longitude", "dropoff_latitude", "passenger_count"]
+
 
 # Fungsi untuk membuat prediksi
 def predict(features):
