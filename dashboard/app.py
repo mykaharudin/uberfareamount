@@ -42,7 +42,7 @@ Melalui berbagai visualisasi, kami menemukan beberapa pola menarik dalam data:
 
 # Visualisasi Distribusi Jarak Perjalanan
 st.subheader("📏 Distribusi Jarak Perjalanan")
-filepathdistance='data/datanewdistance.csv'
+filepathdistance='data/df.csv'
 data_distance = pd.read_csv(filepathdistance)
 st.write(data_distance.head())
 
