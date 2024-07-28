@@ -1,126 +1,182 @@
-import streamlit as st
-import pandas as pd
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import pickle
+import datetime as dt
+import streamlit as st
+from scipy import stats
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
+from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBRegressor, plot_importance
 
-# Judul Aplikasi
-st.title("🚕 Analisis Tarif Uber 🚕")
+st.title('Uber Fare Amount Analysis')
 
-# Overview Proyek
-st.header("📊 Project Overview")
-st.markdown("""
-Selamat datang di analisis tarif Uber! Proyek ini bertujuan untuk memahami dinamika tarif taksi Uber melalui eksplorasi data dan penerapan model linier, memberikan wawasan berharga bagi strategi bisnis Uber.
-""")
+def load_data():
+    url = 'data/uber.csv'
+    df = pd.read_csv(url)
+    return df
 
-# Deskripsi Dataset
-st.header("📁 Dataset Overview")
-st.markdown("""
-Dataset ini terdiri dari 200.000 sampel yang mencakup 7 karakteristik utama. Sementara sebagian besar fitur berupa data numerik, 'pickup_datetime' dan 'id' berbentuk data integer.
-""")
+df = load_data()
 
-# Load data (misalnya dari file CSV yang sudah dibersihkan di Google Colab)
-filepathdata='data/uber.csv'
-uber_data = pd.read_csv(filepathdata)
+st.subheader('Data Overview')
+st.write(df.head())
+st.write(df.info())
 
-# Contoh data
-st.write("Berikut adalah contoh data yang dianalisis:")
-st.write(uber_data.head())
+df = df.rename(columns={"Unnamed: 0": "Id"})
+df = df.drop(columns=['key'])
 
-# Temuan dari Analisis Data
-st.header("🔍 Temuan dari Analisis Data")
-st.markdown("""
-Melalui berbagai visualisasi, kami menemukan beberapa pola menarik dalam data:
-- 🚗 Mayoritas perjalanan memiliki jarak kurang dari 5 km.
-- 💵 Tarif perjalanan sebagian besar berkisar antara 0 hingga 20 dolar.
-- 🧑‍🤝‍🧑 Sebagian besar perjalanan memiliki penumpang antara 1 hingga 6 orang.
-- ☀️ Bulan-bulan musim panas menunjukkan jumlah perjalanan yang lebih sedikit dibandingkan dengan bulan-bulan lainnya.
-- 📅 Jumlah perjalanan harian tinggi pada hari Senin dan rendah pada akhir pekan.
-- 💼 Pendapatan harian lebih rendah pada hari Senin dibandingkan hari Jumat.
-- 📈 Tidak terdapat hubungan yang signifikan antara jumlah penumpang dan tarif perjalanan, namun uji hipotesis menunjukkan adanya korelasi.
-""")
+st.subheader('Missing Values')
+missing_values = df.isnull().sum()
+st.write(missing_values)
 
-# Visualisasi Distribusi Jarak Perjalanan
-st.subheader("📏 Distribusi Jarak Perjalanan")
-filepathdistance='data/df1.csv'
-data_distance = pd.read_csv(filepathdistance)
-st.write(data_distance.head())
+df = df.dropna()
 
+st.write(df.isnull().sum())
 
-# Visualisasi Distribusi Tarif Perjalanan
-st.subheader("💰 Distribusi Tarif Perjalanan")
-fig, ax = plt.subplots()
-sns.histplot(data_distance['fare_amount'], bins=50, kde=True, ax=ax)
-ax.set_title('Distribusi Tarif Perjalanan')
-st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/AktualvsPrediksi.png?raw=true")
+df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'])
 
-# Model Regresi Linier
-st.header("📉 Model Regresi Linier")
-st.markdown("""
-Kami menerapkan model regresi linier untuk memprediksi tarif perjalanan berdasarkan jumlah penumpang, jarak perjalanan, dan jam sibuk. Model ini mencapai skor R² sebesar 0,61, menunjukkan kemampuan model menjelaskan 61% variasi data.
-""")
-st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/Plotresidualprediksi.png?raw=true")
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371  # Earth radius in kilometers
 
-# Hasil Model
-st.subheader("📈 Hasil Model")
-st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/lr.png?raw=true")
-st.markdown("""
-- 📏 Untuk setiap 1,42 km perjalanan, tarif meningkat rata-rata sebesar 2,08 dolar, atau untuk setiap 1 km perjalanan, tarif meningkat rata-rata sebesar 2,08 dolar.
-""")
+    lat1 = np.radians(lat1)
+    lon1 = np.radians(lon1)
+    lat2 = np.radians(lat2)
+    lon2 = np.radians(lon2)
 
-# Model Prediktif dengan XGBoost
-st.header("🤖 Model Pelatihan")
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = np.sin(dlat / 2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2)**2
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+    distance = R * c
 
-# Visualisasi Prediksi vs Nilai Aktual
-st.subheader("🔮 Random Forest Model")
-st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/Random%20Forest%20Model.PNG?raw=true")
-st.markdown("Random Forest: Findings Nilai R-squared adalah 0,58.")
+    return distance
 
+df['distance_km'] = haversine(df['pickup_latitude'], df['pickup_longitude'], df['dropoff_latitude'], df['dropoff_longitude'])
 
-st.subheader("🔮 XGboost")
-st.image("https://github.com/mykaharudin/uberfareamount/blob/main/data/XGboost.PNG?raw=true")
-st.markdown("XGB findings: XGB mencakupi 0.62 varian data atau dengan akurasi 62%, dimana hal ini merupakan hasil tertinggi")
+st.write(df.head())
 
-# Footer
-st.markdown("## 🏁 Kesimpulan")
-st.markdown("""
-Proyek ini memberikan wawasan penting tentang faktor-faktor yang mempengaruhi tarif perjalanan Uber. Dengan model prediksi yang akurat, Uber dapat meningkatkan strategi bisnisnya untuk meningkatkan pendapatan dan efisiensi operasional.
-""")
+st.subheader('Exploratory Data Analysis')
 
+st.write(df.describe())
 
-# Muat model
-with open('data/gradient_boost.pickle', 'rb') as to_read:
-    model = pickle.load(to_read)
+plt.figure(figsize=(7,3))
+ax = sns.histplot(df['fare_amount'], bins=range(0, 100, 5))
+ax.set_xticks(range(0, 100, 5))
+ax.set_xticklabels(range(0, 100, 5))
+plt.title('Histogram Fare Amount')
+st.pyplot(plt)
+
+plt.figure(figsize=(7,3))
+ax = sns.histplot(df['passenger_count'], bins=range(0, 20, 2))
+ax.set_xticks(range(0, 20, 2))
+ax.set_xticklabels(range(0, 20, 2))
+plt.title('Histogram Passenger Count')
+st.pyplot(plt)
+
+mean_fares_by_passenger_count = df.groupby(['passenger_count']).mean()[['fare_amount']]
+st.write(mean_fares_by_passenger_count)
+
+data = mean_fares_by_passenger_count.tail(-1)
+pal = sns.color_palette("Greens_d", len(data))
+rank = data['fare_amount'].argsort().argsort()
+plt.figure(figsize=(12,7))
+ax = sns.barplot(x=data.index, y=data['fare_amount'], palette=np.array(pal[::-1])[rank])
+ax.axhline(df['fare_amount'].mean(), ls='--', color='red', label='global mean')
+ax.legend()
+plt.title('Average Fare Amount by Passenger Count')
+st.pyplot(plt)
+
+df['month'] = df['pickup_datetime'].dt.month_name()
+df['day'] = df['pickup_datetime'].dt.day_name()
+
+df['rush_hour'] = df['pickup_datetime'].dt.hour
+df.loc[df['day'].isin(['Sunday']), 'rush_hour'] = 1
+
+def rush_hourizer(hour):
+    if 6 <= hour['rush_hour'] < 10:
+        val = 1
+    elif 16 <= hour['rush_hour'] < 20:
+        val = 1
+    else:
+        val = 0
+    return val
+
+df.loc[(df.day != 'Sunday'), 'rush_hour'] = df.apply(rush_hourizer, axis=1).astype('int32')
+
+df1 = df.drop(['Id', 'pickup_datetime', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude', 'day', 'month'], axis=1)
+df1['rush_hour'] = df1['rush_hour'].astype(float)
+
+df1 = df1[df1['distance_km'] != 0].reindex()
+
+plt.figure(figsize=(6,4))
+sns.heatmap(df1.corr(method='pearson'), annot=True, cmap='Reds')
+plt.title('Correlation Heatmap')
+st.pyplot(plt)
+
+X = df1.drop(columns=['fare_amount'])
+y = df1[['fare_amount']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=0)
+
+scaler = StandardScaler().fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+
+lr = LinearRegression()
+lr.fit(X_train_scaled, y_train)
+
+r_sq = lr.score(X_train_scaled, y_train)
+y_pred_train = lr.predict(X_train_scaled)
+st.write('Linear Regression Model:')
+st.write('Coefficient of determination:', r_sq)
+st.write('R^2:', r2_score(y_train, y_pred_train))
+st.write('MAE:', mean_absolute_error(y_train, y_pred_train))
+st.write('MSE:', mean_squared_error(y_train, y_pred_train))
+st.write('RMSE:', np.sqrt(mean_squared_error(y_train, y_pred_train)))
+
+X_test_scaled = scaler.transform(X_test)
+
+r_sq_test = lr.score(X_test_scaled, y_test)
+y_pred_test = lr.predict(X_test_scaled)
+st.write('Test Data Evaluation:')
+st.write('Coefficient of determination:', r_sq_test)
+st.write('R^2:', r2_score(y_test, y_pred_test))
+st.write('MAE:', mean_absolute_error(y_test, y_pred_test))
+st.write('MSE:', mean_squared_error(y_test, y_pred_test))
+st.write('RMSE:', np.sqrt(mean_squared_error(y_test, y_pred_test)))
+
+# Add a section for user input and prediction
+st.subheader('Predict Fare Amount for New Data')
+
+pickup_latitude = st.number_input('Pickup Latitude', value=40.7614327)
+pickup_longitude = st.number_input('Pickup Longitude', value=-73.9798156)
+dropoff_latitude = st.number_input('Dropoff Latitude', value=40.6513111)
+dropoff_longitude = st.number_input('Dropoff Longitude', value=-73.8803331)
+passenger_count = st.number_input('Passenger Count', min_value=1, max_value=6, value=1)
+pickup_datetime = st.date_input('Pickup Date', value=pd.to_datetime('2012-10-01'))
+pickup_time = st.time_input('Pickup Time', value=pd.to_datetime('2012-10-01 12:00:00').time())
+
+rush_hour = pickup_time.hour
+if pickup_datetime.weekday() == 6:  # If it's Sunday
+    rush_hour = 1
+else:
+    if 6 <= rush_hour < 10 or 16 <= rush_hour < 20:
+        rush_hour = 1
+    else:
+        rush_hour = 0
+
+if st.button('Predict Fare'):
+    new_data = pd.DataFrame({
+        'passenger_count': [passenger_count],
+        'distance_km': [haversine(pickup_latitude, pickup_longitude, dropoff_latitude, dropoff_longitude)],
+        'rush_hour': [rush_hour]
+    })
+
+    new_data_scaled = scaler.transform(new_data)
+    fare_prediction = lr.predict(new_data_scaled)
     
-# Daftar nama fitur yang digunakan saat melatih model
-feature_names = ["pickup_longitude", "pickup_latitude", "dropoff_longitude", "dropoff_latitude", "passenger_count"]
-
-
-# Fungsi untuk membuat prediksi
-def predict(features):
-    df = pd.DataFrame([features])
-    prediction = model.predict(df)
-    return prediction[0]
-
-# Aplikasi Streamlit
-st.title("Prediksi Tarif Uber")
-
-# Input dari pengguna
-pickup_longitude = st.number_input("Pickup Longitude", value=40.7614327)
-pickup_latitude = st.number_input("Pickup Latitude", value=-73.9798156)
-dropoff_longitude = st.number_input("Dropoff Longitude", value=40.6513111)
-dropoff_latitude = st.number_input("Dropoff Latitude", value=-73.8803331)
-passenger_count = st.number_input("Passenger Count", min_value=1, max_value=10, value=1)
-
-# Tombol prediksi
-if st.button("Prediksi"):
-    features = {
-        "pickup_longitude": pickup_longitude,
-        "pickup_latitude": pickup_latitude,
-        "dropoff_longitude": dropoff_longitude,
-        "dropoff_latitude": dropoff_latitude,
-        "passenger_count": passenger_count
-    }
-    fare = predict(features)
-    st.write(f"Tarif yang diprediksi adalah ${fare:.2f}")
+ # Ensure fare_prediction is a scalar value and convert to float
+    predicted_fare = float(fare_prediction[0])
+    st.write(f'Predicted Fare Amount: ${predicted_fare:.2f}')
