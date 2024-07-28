@@ -43,21 +43,21 @@ Melalui berbagai visualisasi, kami menemukan beberapa pola menarik dalam data:
 # Visualisasi Distribusi Jarak Perjalanan
 st.subheader("📏 Distribusi Jarak Perjalanan")
 fig, ax = plt.subplots()
-sns.histplot(data['distance_km'], bins=50, kde=True, ax=ax)
+sns.histplot(uber_data['distance_km'], bins=50, kde=True, ax=ax)
 ax.set_title('Distribusi Jarak Perjalanan')
 st.pyplot(fig)
 
 # Visualisasi Distribusi Tarif Perjalanan
 st.subheader("💰 Distribusi Tarif Perjalanan")
 fig, ax = plt.subplots()
-sns.histplot(data['fare_amount'], bins=50, kde=True, ax=ax)
+sns.histplot(uber_data['fare_amount'], bins=50, kde=True, ax=ax)
 ax.set_title('Distribusi Tarif Perjalanan')
 st.pyplot(fig)
 
 # Model Regresi Linier
 st.header("📉 Model Regresi Linier")
 st.markdown("""
-Kami menerapkan model regresi linier untuk memprediksi tarif perjalanan berdasarkan jumlah penumpang, jarak perjalanan, dan jam sibuk. Model ini mencapai skor R² sebesar 0,61, menunjukkan kemampuan model menjelaskan 61% variasi data.
+Kami menerapkan model regresi linier untuk memprediksi tarif perjalanan berdasarkan jumlah penumpang, jarak perjalanan, dan jam sibuk. Model ini mencapai skor R² sebesar 0,61, menunjukkan kemampuan model menjelaskan 61% variasi uber_data.
 """)
 
 # Hasil Model
@@ -75,7 +75,7 @@ Setelah menerapkan model regresi linier, kami mencoba model lain seperti Random 
 # Visualisasi Prediksi vs Nilai Aktual
 st.subheader("🔮 Prediksi vs Nilai Aktual (XGBoost)")
 fig, ax = plt.subplots()
-y_test = data['fare_amount'][:100]
+y_test = uber_data['fare_amount'][:100]
 y_pred_xgb = y_test + (np.random.randn(100) * 2)  # Contoh prediksi acak
 sns.scatterplot(x=y_test, y=y_pred_xgb, ax=ax)
 ax.set_xlabel('Tarif Aktual')
