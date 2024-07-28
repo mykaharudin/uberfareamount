@@ -50,7 +50,7 @@ st.write(data_distance.head())
 # Visualisasi Distribusi Tarif Perjalanan
 st.subheader("💰 Distribusi Tarif Perjalanan")
 fig, ax = plt.subplots()
-sns.histplot(uber_data['fare_amount'], bins=50, kde=True, ax=ax)
+sns.histplot(data_distance['fare_amount'], bins=50, kde=True, ax=ax)
 ax.set_title('Distribusi Tarif Perjalanan')
 st.pyplot(fig)
 
