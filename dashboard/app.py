@@ -52,36 +52,33 @@ st.subheader("💰 Distribusi Tarif Perjalanan")
 fig, ax = plt.subplots()
 sns.histplot(data_distance['fare_amount'], bins=50, kde=True, ax=ax)
 ax.set_title('Distribusi Tarif Perjalanan')
-# st.image(data/AktualvsPrediksi.png)
+st.image('https://github.com/mykaharudin/uberfareamount/blob/main/data/AktualvsPrediksi.png?raw=true')
 
 # Model Regresi Linier
 st.header("📉 Model Regresi Linier")
 st.markdown("""
 Kami menerapkan model regresi linier untuk memprediksi tarif perjalanan berdasarkan jumlah penumpang, jarak perjalanan, dan jam sibuk. Model ini mencapai skor R² sebesar 0,61, menunjukkan kemampuan model menjelaskan 61% variasi data.
 """)
+st.image('https://github.com/mykaharudin/uberfareamount/blob/main/data/Plotresidualprediksi.png?raw=true')
 
 # Hasil Model
 st.subheader("📈 Hasil Model")
 st.markdown("""
-- 📏 Untuk setiap 1,42 km perjalanan, tarif meningkat rata-rata sebesar 2,95 dolar, atau untuk setiap 1 km perjalanan, tarif meningkat rata-rata sebesar 2,08 dolar.
+- 📏 Untuk setiap 1,42 km perjalanan, tarif meningkat rata-rata sebesar 2,08 dolar, atau untuk setiap 1 km perjalanan, tarif meningkat rata-rata sebesar 2,08 dolar.
 """)
 
 # Model Prediktif dengan XGBoost
-st.header("🤖 Model Prediktif")
-st.markdown("""
-Setelah menerapkan model regresi linier, kami mencoba model lain seperti Random Forest dan XGBoost. XGBoost memiliki kinerja terbaik dengan varian sebesar 0,62, yang akan digunakan untuk tujuan prediksi.
-""")
+st.header("🤖 Model Pelatihan")
 
 # Visualisasi Prediksi vs Nilai Aktual
-st.subheader("🔮 Prediksi vs Nilai Aktual (XGBoost)")
-fig, ax = plt.subplots()
-y_test = uber_data['fare_amount'][:100]
-y_pred_xgb = y_test + (np.random.randn(100) * 2)  # Contoh prediksi acak
-sns.scatterplot(x=y_test, y=y_pred_xgb, ax=ax)
-ax.set_xlabel('Tarif Aktual')
-ax.set_ylabel('Tarif Prediksi')
-ax.set_title('Tarif Aktual vs Prediksi (XGBoost)')
-st.pyplot(fig)
+st.subheader("🔮 Random Forest Model")
+st.image('')
+st.markdown('Random Forest: Findings Nilai R-squared adalah 0,58.')
+
+
+st.subheader("🔮 XGboost")
+st.image('')
+st.markdown('XGB findings: XGB mencakupi 0.62 varian data atau dengan akurasi 62%, dimana hal ini merupakan hasil tertinggi')
 
 # Footer
 st.markdown("## 🏁 Kesimpulan")
