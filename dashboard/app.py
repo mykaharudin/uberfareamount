@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pickle
 
 # Judul Aplikasi
 st.title("🚕 Analisis Tarif Uber 🚕")
@@ -86,3 +87,36 @@ st.markdown("## 🏁 Kesimpulan")
 st.markdown("""
 Proyek ini memberikan wawasan penting tentang faktor-faktor yang mempengaruhi tarif perjalanan Uber. Dengan model prediksi yang akurat, Uber dapat meningkatkan strategi bisnisnya untuk meningkatkan pendapatan dan efisiensi operasional.
 """)
+
+
+# Muat model
+with open('data/gradient_boost.pickle', 'rb') as to_read:
+    model = pickle.load(to_read)
+
+# Fungsi untuk membuat prediksi
+def predict(features):
+    df = pd.DataFrame([features])
+    prediction = model.predict(df)
+    return prediction[0]
+
+# Aplikasi Streamlit
+st.title("Prediksi Tarif Uber")
+
+# Input dari pengguna
+pickup_longitude = st.number_input("Pickup Longitude", value=40.7614327)
+pickup_latitude = st.number_input("Pickup Latitude", value=-73.9798156)
+dropoff_longitude = st.number_input("Dropoff Longitude", value=40.6513111)
+dropoff_latitude = st.number_input("Dropoff Latitude", value=-73.8803331)
+passenger_count = st.number_input("Passenger Count", min_value=1, max_value=10, value=1)
+
+# Tombol prediksi
+if st.button("Prediksi"):
+    features = {
+        "pickup_longitude": pickup_longitude,
+        "pickup_latitude": pickup_latitude,
+        "dropoff_longitude": dropoff_longitude,
+        "dropoff_latitude": dropoff_latitude,
+        "passenger_count": passenger_count
+    }
+    fare = predict(features)
+    st.write(f"Tarif yang diprediksi adalah ${fare:.2f}")
