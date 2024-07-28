@@ -72,12 +72,12 @@ st.header("🤖 Model Pelatihan")
 
 # Visualisasi Prediksi vs Nilai Aktual
 st.subheader("🔮 Random Forest Model")
-st.image('')
+st.image('https://github.com/mykaharudin/uberfareamount/blob/main/data/Random%20Forest%20Model.PNG?raw=true')
 st.markdown('Random Forest: Findings Nilai R-squared adalah 0,58.')
 
 
 st.subheader("🔮 XGboost")
-st.image('')
+st.image('https://github.com/mykaharudin/uberfareamount/blob/main/data/XGboost.PNG?raw=true')
 st.markdown('XGB findings: XGB mencakupi 0.62 varian data atau dengan akurasi 62%, dimana hal ini merupakan hasil tertinggi')
 
 # Footer
